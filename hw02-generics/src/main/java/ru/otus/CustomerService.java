@@ -17,7 +17,7 @@ public class CustomerService {
     }
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
-        Map.Entry<Customer, String> entry = customerMap.tailMap(customer, false).ceilingEntry(customer);
+        Map.Entry<Customer, String> entry = customerMap.higherEntry(customer);
 
         return copyEntry(entry);
     }
@@ -27,7 +27,9 @@ public class CustomerService {
     }
 
     private Map.Entry<Customer, String> copyEntry(Map.Entry<Customer, String> entry) {
-        if (entry == null) return null;
+        if (entry == null) {
+            return null;
+        }
 
         return new AbstractMap.SimpleEntry<>(new Customer(entry.getKey()), entry.getValue());
     }
