@@ -5,7 +5,7 @@ import ru.otus.testframework.annotations.Before;
 import ru.otus.testframework.annotations.Test;
 
 @Test
-public class TestClass {
+public class TestClass2 {
     @Before
     public void before() {
     }
