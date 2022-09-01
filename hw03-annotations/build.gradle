@@ -15,3 +15,12 @@ tasks.withType(JavaCompile) {
         encoding = 'UTF-8'
     }
 }
+
+//sourceSets {
+//    main {
+//        java {
+//            srcDirs 'src/main/java'
+//            srcDirs 'src/test/java'
+//        }
+//    }
+//}
