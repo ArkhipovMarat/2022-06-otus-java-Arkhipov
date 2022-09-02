@@ -11,12 +11,12 @@ public class TestClass2 {
     }
 
     @Test
-    public void testSmthShouldPassWithError() {
+    public void testSmth2ShouldPassWithError() {
         throw new IllegalArgumentException("ТЕСТ ЗАВЕРШИЛСЯ С ОШИБКОЙ");
     }
 
     @Test
-    public void testSmthShouldPassSuccess() {
+    public void testSmth2ShouldPassSuccess() {
     }
 
     @After

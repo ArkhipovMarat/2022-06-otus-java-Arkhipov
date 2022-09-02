@@ -1,5 +1,4 @@
-import ru.otus.testframework.service.TestFrameworkRunner;
-import ru.otus.testframework.service.impl.TestFrameworkRunnerImpl;
+import ru.otus.testframework.TestFrameworkRunner;
 
 public class Main {
     public static void main(String[] args) {
@@ -7,7 +6,7 @@ public class Main {
         final String path = "ru/otus/tests";
 
         // раннер для запуска тестов
-        TestFrameworkRunner testRunner = new TestFrameworkRunnerImpl();
+        TestFrameworkRunner testRunner = new TestFrameworkRunner();
         testRunner.runTests(path);
     }
 }

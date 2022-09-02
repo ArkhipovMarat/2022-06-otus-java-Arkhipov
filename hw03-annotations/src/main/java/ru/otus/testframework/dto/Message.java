@@ -39,7 +39,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return MessageFormat.format("\nОтчет о прохождении тестов для класса {0}\n{1}",
+        return MessageFormat.format("\nПрохождение тестов для класса {0}\n{1}",
                 className, reportList);
     }
 }
