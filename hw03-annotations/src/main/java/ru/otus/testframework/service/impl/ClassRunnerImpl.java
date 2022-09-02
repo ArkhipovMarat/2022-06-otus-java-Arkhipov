@@ -1,5 +1,6 @@
 package ru.otus.testframework.service.impl;
 
+import lombok.AllArgsConstructor;
 import ru.otus.testframework.annotations.After;
 import ru.otus.testframework.annotations.Before;
 import ru.otus.testframework.annotations.Test;
@@ -19,8 +20,9 @@ import static ru.otus.testframework.dto.Message.Report;
 import static ru.otus.testframework.dto.Message.Status.ERROR;
 import static ru.otus.testframework.dto.Message.Status.SUCCESS;
 
+@AllArgsConstructor
 public class ClassRunnerImpl implements ClassRunner {
-    private final ValidationService validationService = new ValidationServiceImpl();
+    private final ValidationService validationService;
 
     @Override
     public Message runTestClass(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
