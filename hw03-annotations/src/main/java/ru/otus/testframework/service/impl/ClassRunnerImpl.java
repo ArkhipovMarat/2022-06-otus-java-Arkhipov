@@ -1,12 +1,10 @@
 package ru.otus.testframework.service.impl;
 
-import lombok.AllArgsConstructor;
 import ru.otus.testframework.annotations.After;
 import ru.otus.testframework.annotations.Before;
 import ru.otus.testframework.annotations.Test;
 import ru.otus.testframework.dto.Message;
 import ru.otus.testframework.service.ClassRunner;
-import ru.otus.testframework.service.ValidationService;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -20,18 +18,9 @@ import static ru.otus.testframework.dto.Message.Report;
 import static ru.otus.testframework.dto.Message.Status.ERROR;
 import static ru.otus.testframework.dto.Message.Status.SUCCESS;
 
-@AllArgsConstructor
 public class ClassRunnerImpl implements ClassRunner {
-    private final ValidationService validationService;
-
     @Override
     public Message runTestClass(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        try {
-            validationService.validate(clazz);
-        } catch (IllegalArgumentException ignored) {
-            System.out.println();
-        }
-
         String className = clazz.getSimpleName();
         Object object = clazz.getDeclaredConstructor().newInstance();
         List<Report> reportList = new ArrayList<>();

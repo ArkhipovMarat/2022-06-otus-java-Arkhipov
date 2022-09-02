@@ -5,6 +5,7 @@ import ru.otus.testframework.dto.Message;
 import ru.otus.testframework.service.ClassFinder;
 import ru.otus.testframework.service.ClassRunner;
 import ru.otus.testframework.service.ReportService;
+import ru.otus.testframework.service.ValidationService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class TestFrameworkRunner {
     private final ClassFinder classFinder;
     private final ClassRunner classRunner;
     private final ReportService reportService;
+    private final ValidationService validationService;
 
     public void runTests(String path) {
         List<Class<?>> classList = classFinder.find(path);
@@ -22,6 +24,10 @@ public class TestFrameworkRunner {
         List<Message> messageList = new ArrayList<>();
 
         for (Class<?> clazz : classList) {
+            if (!validationService.validate(clazz)) {
+                continue;
+            }
+
             try {
                 Message message = classRunner.runTestClass(clazz);
                 messageList.add(message);

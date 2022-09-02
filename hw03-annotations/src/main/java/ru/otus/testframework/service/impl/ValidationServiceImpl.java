@@ -7,16 +7,16 @@ import java.lang.reflect.Method;
 
 public class ValidationServiceImpl implements ValidationService {
     @Override
-    public void validate(Class<?> clazz) throws IllegalArgumentException {
+    public boolean validate(Class<?> clazz) {
         if (!clazz.isAnnotationPresent(Test.class)) {
-            throw new IllegalArgumentException("Класс не является тестовым");
+            return false;
         }
 
         for (Method method : clazz.getDeclaredMethods()) {
             if (method.isAnnotationPresent(Test.class)) {
-                return;
+                return true;
             }
         }
-        throw new IllegalArgumentException("В классе не обнаружены методы для тестов");
+        return false;
     }
 }

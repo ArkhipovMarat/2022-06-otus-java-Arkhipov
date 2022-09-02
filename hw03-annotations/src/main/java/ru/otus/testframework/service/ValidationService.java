@@ -1,5 +1,12 @@
 package ru.otus.testframework.service;
 
+/**
+* Сервис валидации тестовых классов
+* */
 public interface ValidationService {
-    void validate(Class<?> clazz) throws IllegalArgumentException;
+    /**
+    * метод проверяет является ли класс тестовым - содержит аннотации @Test
+     * @return true - класс является тестовым
+    * */
+    boolean validate(Class<?> clazz);
 }
