@@ -5,9 +5,6 @@ import ru.otus.testframework.dto.Message;
 import ru.otus.testframework.service.ClassFinder;
 import ru.otus.testframework.service.ClassRunner;
 import ru.otus.testframework.service.ReportService;
-import ru.otus.testframework.service.impl.ClassFinderImpl;
-import ru.otus.testframework.service.impl.ClassRunnerImpl;
-import ru.otus.testframework.service.impl.ReportServiceImpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
