@@ -22,12 +22,21 @@ public class ClassRunnerImpl implements ClassRunner {
     @Override
     public Message runTestClass(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         String className = clazz.getSimpleName();
-        Object object = clazz.getDeclaredConstructor().newInstance();
         List<Report> reportList = new ArrayList<>();
 
-        processMethod(object, clazz, Before.class, reportList);
-        processMethod(object, clazz, Test.class, reportList);
-        processMethod(object, clazz, After.class, reportList);
+        for (Method testMethod : getMethodsByAnnotation(clazz, Test.class)) {
+            Object object = clazz.getDeclaredConstructor().newInstance();
+
+            for (Method beforeMethods : getMethodsByAnnotation(clazz, Before.class)) {
+                processMethod(object, beforeMethods, Before.class, reportList);
+            }
+
+            processMethod(object, testMethod, Test.class, reportList);
+
+            for (Method afterMethods : getMethodsByAnnotation(clazz, After.class)) {
+                processMethod(object, afterMethods, After.class, reportList);
+            }
+        }
 
         return Message
                 .builder()
@@ -36,17 +45,14 @@ public class ClassRunnerImpl implements ClassRunner {
                 .build();
     }
 
-    private void processMethod(Object object, Class<?> clazz, Class<? extends Annotation> annotation, List<Report> reportList) throws IllegalAccessException {
-        List<Method> methodsByAnnotation = getMethodsByAnnotation(clazz, annotation);
-
-        for (Method method : methodsByAnnotation) {
-            try {
-                method.invoke(object);
-                reportList.add(new Report(method.getName(), annotation.getSimpleName(), SUCCESS, null));
-            } catch (InvocationTargetException e) {
-                reportList.add(new Report(method.getName(), annotation.getSimpleName(), ERROR, e.getTargetException().getMessage()));
-            }
+    private void processMethod(Object object, Method method, Class<? extends Annotation> annotation, List<Report> reportList) throws IllegalAccessException {
+        try {
+            method.invoke(object);
+            reportList.add(new Report(method.getName(), annotation.getSimpleName(), SUCCESS, null));
+        } catch (InvocationTargetException e) {
+            reportList.add(new Report(method.getName(), annotation.getSimpleName(), ERROR, e.getTargetException().getMessage()));
         }
+
     }
 
     private List<Method> getMethodsByAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
