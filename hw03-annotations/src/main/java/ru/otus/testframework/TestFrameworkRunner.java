@@ -8,6 +8,7 @@ import ru.otus.testframework.service.ReportService;
 import ru.otus.testframework.service.ValidationService;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,18 +25,21 @@ public class TestFrameworkRunner {
         List<Message> messageList = new ArrayList<>();
 
         for (Class<?> clazz : classList) {
-            if (!validationService.validate(clazz)) {
-                continue;
-            }
-
-            try {
-                Message message = classRunner.runTestClass(clazz);
+            if (validationService.validate(clazz)) {
+                Message message = runTestClass(clazz);
                 messageList.add(message);
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                System.out.println("КРИТИЧЕСКАЯ ОШИБКА В РАБОТЕ ФРЕЙМВОРКА");
             }
         }
 
         reportService.printReport(messageList);
+    }
+
+    private Message runTestClass(Class<?> clazz) {
+        try {
+            return classRunner.runTestClass(clazz);
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            return Message.createErrorMsg(clazz.getSimpleName(),
+                    MessageFormat.format("КРИТИЧЕСКАЯ ОШИБКА В РАБОТЕ ФРЕЙМВОРКА : {0}", e.getMessage()));
+        }
     }
 }

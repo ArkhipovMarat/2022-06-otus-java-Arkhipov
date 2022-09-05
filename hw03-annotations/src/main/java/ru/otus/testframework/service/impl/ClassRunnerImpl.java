@@ -24,17 +24,20 @@ public class ClassRunnerImpl implements ClassRunner {
         String className = clazz.getSimpleName();
         List<Report> reportList = new ArrayList<>();
 
+        List<Method> beforeMethods = getMethodsByAnnotation(clazz, Before.class);
+        List<Method> afterMethods = getMethodsByAnnotation(clazz, After.class);
+
         for (Method testMethod : getMethodsByAnnotation(clazz, Test.class)) {
             Object object = clazz.getDeclaredConstructor().newInstance();
 
-            for (Method beforeMethods : getMethodsByAnnotation(clazz, Before.class)) {
-                processMethod(object, beforeMethods, Before.class, reportList);
+            for (Method beforeMethod : beforeMethods) {
+                processMethod(object, beforeMethod, Before.class, reportList);
             }
 
             processMethod(object, testMethod, Test.class, reportList);
 
-            for (Method afterMethods : getMethodsByAnnotation(clazz, After.class)) {
-                processMethod(object, afterMethods, After.class, reportList);
+            for (Method afterMethod : afterMethods) {
+                processMethod(object, afterMethod, After.class, reportList);
             }
         }
 

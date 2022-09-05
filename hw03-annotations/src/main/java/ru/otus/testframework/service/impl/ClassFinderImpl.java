@@ -6,26 +6,36 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ClassFinderImpl implements ClassFinder {
+    private final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
     @Override
     public List<Class<?>> find(String path) {
-        try (InputStream stream = ClassLoader.getSystemClassLoader().getResourceAsStream(path);
+        return findClass(path, new ArrayList<>());
+    }
+
+    private List<Class<?>> findClass(String path, List<Class<?>> classList) {
+        try (InputStream stream = classLoader.getResourceAsStream(path);
              BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(stream)))) {
 
-            return reader.lines()
-                    .filter(line -> line.endsWith(".class"))
-                    .map(line -> getClass(line, pathToPackage(path)))
-                    .collect(Collectors.toList());
+            for (String file : reader.lines().collect(Collectors.toList())) {
+                if (!file.contains(".")) {
+                    findClass(path + "/" + file, classList);
+                }
+                if (file.endsWith(".class")) {
+                    classList.add(getClass(file, pathToPackage(path)));
+                }
+            }
         } catch (IOException e) {
             System.out.printf("Ошибка чтения тестовых классов в пакете %s, причина: %s%n", path, e.getMessage());
         }
-        return null;
+        return classList;
     }
-
 
     private Class<?> getClass(String className, String packageName) {
         try {
@@ -37,6 +47,6 @@ public class ClassFinderImpl implements ClassFinder {
     }
 
     private String pathToPackage(String path) {
-        return path.replaceAll("\\/", ".");
+        return path.replaceAll("/", ".");
     }
 }

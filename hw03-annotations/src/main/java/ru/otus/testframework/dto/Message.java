@@ -24,6 +24,7 @@ public class Message {
 
     @AllArgsConstructor
     @Data
+    @Builder
     public static class Report {
         private String methodName;
         private String methodType;
@@ -41,5 +42,12 @@ public class Message {
     public String toString() {
         return MessageFormat.format("\nПрохождение тестов для класса {0}\n{1}",
                 className, reportList);
+    }
+
+    public static Message createErrorMsg(String className, String errorMsg) {
+        return new Message(className, List.of(Report.builder()
+                .message(errorMsg)
+                .build())
+        );
     }
 }
