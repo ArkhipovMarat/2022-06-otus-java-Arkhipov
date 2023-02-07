@@ -1,15 +1,13 @@
 package ru.otus.repository;
 
-import ru.otus.model.CurrencyValue;
+import ru.otus.model.Cash;
 
-import java.util.Set;
+import java.util.List;
 
 public interface CashRepository {
-    void put(CurrencyValue currencyValue, long count);
+    void put(List<Cash> cashList);
 
-    long get(CurrencyValue currencyValue, long count);
+    void remove(List<Cash> cashList);
 
-    long getCount(CurrencyValue currencyValue);
-
-    Set<CurrencyValue> getCurrencyValues();
+    List<Cash> getAvailable();
 }

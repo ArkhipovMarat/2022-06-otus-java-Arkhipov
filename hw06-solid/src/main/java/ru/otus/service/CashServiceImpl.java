@@ -1,42 +1,38 @@
 package ru.otus.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import ru.otus.converter.CashConverter;
 import ru.otus.model.Cash;
-import ru.otus.model.CurrencyValue;
 import ru.otus.repository.CashRepository;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CashServiceImpl implements CashService {
     private final CashRepository cashRepository;
 
     @Override
     public void put(List<Cash> cashList) {
-        cashList.forEach(cash -> cashRepository.put(cash.getCurrencyValue(), cash.getCount()));
+        cashRepository.put(cashList);
     }
 
     @Override
     public List<Cash> get(long sum) {
-        return getSumm(sum);
+        List<Cash> cashList = toCash(sum);
+
+        cashRepository.remove(cashList);
+
+        return cashList;
     }
 
     @Override
-    public List<Cash> findAll() {
-        return cashRepository.getCurrencyValues().stream()
-                .map(currencyValue -> CashConverter.toCash(currencyValue,
-                        cashRepository.getCount(currencyValue)))
-                .collect(Collectors.toList());
+    public List<Cash> getAvailable() {
+        return cashRepository.getAvailable();
     }
 
-    private List<Cash> getSumm(long sum) {
-        List<Cash> cash = CashConverter.toCash(findAll(), sum);
+    private List<Cash> toCash(long sum) {
+        List<Cash> availableCashList = getAvailable();
 
-        cash.forEach(cash1 -> cashRepository.get(cash1.getCurrencyValue(), cash1.getCount()));
-
-        return cash;
+        return CashConverter.toCash(availableCashList, sum);
     }
 }

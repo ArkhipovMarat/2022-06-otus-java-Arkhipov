@@ -8,12 +8,12 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum CurrencyValue {
+public enum Nominal {
     R100(100),
     R200(200),
     R500(500),
     R1000(1000),
     R5000(5000);
 
-    private long value;
+    private int value;
 }

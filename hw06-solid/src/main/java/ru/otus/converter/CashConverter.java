@@ -2,42 +2,39 @@ package ru.otus.converter;
 
 import lombok.experimental.UtilityClass;
 import ru.otus.model.Cash;
-import ru.otus.model.CurrencyValue;
+import ru.otus.model.Nominal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
 
 @UtilityClass
 public class CashConverter {
-    public Cash toCash(CurrencyValue currencyValue, long count) {
-        return new Cash(currencyValue, count);
+    public Cash toCash(Nominal nominal, long count) {
+        return new Cash(nominal, count);
     }
 
-    public List<Cash> toCash(List<Cash> sourceCash, long sum) {
-        List<Cash> cash = new ArrayList<>();
+    public List<Cash> toCash(List<Cash> sourceCashList, long sum) {
+        List<Cash> resultCashList = new ArrayList<>();
 
-        Map<CurrencyValue, Long> sourceCashByCurrencyValue = sourceCash.stream()
-                .collect(Collectors.toMap(Cash::getCurrencyValue, Cash::getCount));
+        sourceCashList.sort(comparing(Cash::getNominal).reversed());
 
-        for (Map.Entry<CurrencyValue, Long> entry : sourceCashByCurrencyValue.entrySet()) {
-            long sourceCashValue = entry.getKey().getValue();
-            long sourceCashCount = entry.getValue();
+        for (Cash cash : sourceCashList) {
+            int nominalValue = cash.getNominal().getValue();
 
-            if (sum >= sourceCashValue) {
-                long count = getCount(sum, sourceCashValue, sourceCashCount);
-                sum -= sourceCashValue * count;
-                cash.add(new Cash(entry.getKey(), count));
+            if (sum >= nominalValue) {
+                long count = getCount(sum, nominalValue, cash.getCount());
+                sum -= nominalValue * count;
+                resultCashList.add(toCash(cash.getNominal(), count));
             }
         }
 
-        return cash;
+        return resultCashList;
     }
 
-    private long getCount(long sum, long sourceCashValue, long sourceCashCount) {
-        long count = sum / sourceCashValue;
+    private long getCount(long sum, long nominalValue, long sourceCashCount) {
+        long count = sum / nominalValue;
         return sourceCashCount - count >= 0 ? count : sourceCashCount;
     }
 }

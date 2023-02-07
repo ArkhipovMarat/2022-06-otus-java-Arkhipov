@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * Сущность - Денежная единица
+ * Сущность - наличные денежные средства
  */
 @Data
 @AllArgsConstructor
@@ -12,7 +12,7 @@ public class Cash {
     /**
      * Номинал
      */
-    private CurrencyValue currencyValue;
+    private Nominal nominal;
 
     /**
      * Количество
