@@ -1,45 +1,40 @@
 package ru.otus.repository;
 
-import ru.otus.converter.CashConverter;
+import ru.otus.exception.CashNotFoundException;
 import ru.otus.model.Cash;
-import ru.otus.model.Nominal;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CashRepositoryImpl implements CashRepository {
-    private final Map<Nominal, Long> cashRepository;
+    private final List<Cash> cashRepository;
 
-    public CashRepositoryImpl(Map<Nominal, Long> cashRepository) {
+    public CashRepositoryImpl(List<Cash> cashRepository) {
         this.cashRepository = cashRepository;
     }
 
     @Override
     public void put(List<Cash> cashList) {
-        for (Cash cash : cashList) {
-            cashRepository.computeIfPresent(cash.getNominal(), (k, v) -> v + cash.getCount());
-        }
+        cashList.forEach(cash -> get(cash).add(cash.getCount()));
     }
 
     @Override
     public void remove(List<Cash> cashList) {
-        for (Cash cash : cashList) {
-            cashRepository.computeIfPresent(cash.getNominal(), (k, v) -> v - cash.getCount());
-        }
+        cashList.forEach(cash -> get(cash).remove(cash.getCount()));
     }
 
     @Override
     public List<Cash> getAvailable() {
         List<Cash> cashList = new ArrayList<>();
 
-        for (Nominal nominal : cashRepository.keySet()) {
-            Long count = cashRepository.get(nominal);
-            if (count != 0) {
-                cashList.add(CashConverter.toCash(nominal, count));
-            }
-        }
+        cashRepository.forEach(cash -> cashList.add(cash.clone()));
 
         return cashList;
+    }
+
+    private Cash get(Cash cash) {
+        return cashRepository.stream().filter(v -> v.equals(cash)).findFirst()
+                .orElseThrow(() -> new CashNotFoundException(String.format("Не найдена ячейка с номиналом - %s",
+                        cash.getNominal())));
     }
 }

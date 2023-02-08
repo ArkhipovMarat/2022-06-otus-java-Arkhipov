@@ -3,6 +3,9 @@ package ru.otus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.otus.converter.CashConverter;
+import ru.otus.converter.GreedyCashConverter;
+import ru.otus.exception.CashConverterException;
 import ru.otus.model.Cash;
 import ru.otus.model.Nominal;
 import ru.otus.repository.CashRepository;
@@ -10,27 +13,28 @@ import ru.otus.repository.CashRepositoryImpl;
 import ru.otus.service.CashService;
 import ru.otus.service.CashServiceImpl;
 
-import java.util.EnumMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CashServiceTest {
     private CashService cashService;
 
     @BeforeEach
     public void beforeEach() {
-        Map<Nominal, Long> cashMap = new EnumMap<>(Nominal.class);
-        cashMap.put(Nominal.R100, 1L);
-        cashMap.put(Nominal.R200, 1L);
-        cashMap.put(Nominal.R500, 1L);
-        cashMap.put(Nominal.R1000, 1L);
-        cashMap.put(Nominal.R5000, 1L);
+        List<Cash> cash = new ArrayList<>();
+        cash.add(new Cash(Nominal.R5000, 1L));
+        cash.add(new Cash(Nominal.R100, 1L));
+        cash.add(new Cash(Nominal.R200, 1L));
+        cash.add(new Cash(Nominal.R500, 1L));
+        cash.add(new Cash(Nominal.R1000, 1L));
 
-        CashRepository cashRepository = new CashRepositoryImpl(cashMap);
-        cashService = new CashServiceImpl(cashRepository);
+        CashRepository cashRepository = new CashRepositoryImpl(cash);
+        CashConverter cashConverter = new GreedyCashConverter();
+        cashService = new CashServiceImpl(cashRepository, cashConverter);
     }
 
     @DisplayName("Тест метода внести наличные - упешно")
@@ -74,8 +78,17 @@ public class CashServiceTest {
         assertEquals(6800, toSum(availableCash));
     }
 
+    @DisplayName("Тест метода получить наличные - неуспешно - в банкомате недостаточно средств")
+    @Test
+    public void getAvailableCash_ShouldThrowCashConverterException() {
+        // given
+        long sum = 6900;
+
+        assertThrows(CashConverterException.class, () -> cashService.get(sum));
+    }
+
     private long toSum(List<Cash> cashList) {
-       return cashList.stream()
+        return cashList.stream()
                 .flatMapToLong(cash -> LongStream.of(cash.getNominal().getValue() * cash.getCount()))
                 .sum();
     }

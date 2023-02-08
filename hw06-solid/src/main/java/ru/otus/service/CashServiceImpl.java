@@ -10,6 +10,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CashServiceImpl implements CashService {
     private final CashRepository cashRepository;
+    private final CashConverter cashConverter;
 
     @Override
     public void put(List<Cash> cashList) {
@@ -33,6 +34,6 @@ public class CashServiceImpl implements CashService {
     private List<Cash> toCash(long sum) {
         List<Cash> availableCashList = getAvailable();
 
-        return CashConverter.toCash(availableCashList, sum);
+        return cashConverter.toCash(availableCashList, sum);
     }
 }
