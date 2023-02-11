@@ -1,39 +1,39 @@
 package ru.otus.service;
 
 import lombok.RequiredArgsConstructor;
-import ru.otus.converter.CashConverter;
-import ru.otus.model.Cash;
-import ru.otus.repository.CashRepository;
+import ru.otus.converter.CashBoxConverter;
+import ru.otus.model.CashBox;
+import ru.otus.repository.CashBoxRepository;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 public class CashServiceImpl implements CashService {
-    private final CashRepository cashRepository;
-    private final CashConverter cashConverter;
+    private final CashBoxRepository cashBoxRepository;
+    private final CashBoxConverter cashBoxConverter;
 
     @Override
-    public void put(List<Cash> cashList) {
-        cashRepository.put(cashList);
+    public void put(List<CashBox> cashBoxList) {
+        cashBoxRepository.put(cashBoxList);
     }
 
     @Override
-    public List<Cash> get(long sum) {
-        List<Cash> cashList = toCash(sum);
+    public List<CashBox> get(int sum) {
+        List<CashBox> cashBoxList = toCash(sum);
 
-        cashRepository.remove(cashList);
+        cashBoxRepository.remove(cashBoxList);
 
-        return cashList;
+        return cashBoxList;
     }
 
     @Override
-    public List<Cash> getAvailable() {
-        return cashRepository.getAvailable();
+    public List<CashBox> getAvailable() {
+        return cashBoxRepository.getAvailable();
     }
 
-    private List<Cash> toCash(long sum) {
-        List<Cash> availableCashList = getAvailable();
+    private List<CashBox> toCash(int sum) {
+        List<CashBox> availableCashBoxList = getAvailable();
 
-        return cashConverter.toCash(availableCashList, sum);
+        return cashBoxConverter.toCash(availableCashBoxList, sum);
     }
 }

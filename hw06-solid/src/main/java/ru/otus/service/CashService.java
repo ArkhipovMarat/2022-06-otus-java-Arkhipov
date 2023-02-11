@@ -1,25 +1,25 @@
 package ru.otus.service;
 
-import ru.otus.model.Cash;
+import ru.otus.model.CashBox;
 
 import java.util.List;
 
 /**
- * Сервис обработки операция с наличными средствами
+ * Сервис операций с наличными средствами
  */
 public interface CashService {
     /**
      * Положить наличные
      */
-    void put(List<Cash> cash);
+    void put(List<CashBox> cashBoxes);
 
     /**
      * Получить наличные
      */
-    List<Cash> get(long sum);
+    List<CashBox> get(int sum);
 
     /**
      * Узнать о количестве доступных наличных
      */
-    List<Cash> getAvailable();
+    List<CashBox> getAvailable();
 }

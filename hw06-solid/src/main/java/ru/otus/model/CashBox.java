@@ -9,7 +9,7 @@ import ru.otus.exception.NotEnoughCashException;
  */
 @Data
 @AllArgsConstructor
-public class Cash implements Cloneable{
+public class CashBox implements Cloneable {
     /**
      * Номинал
      */
@@ -18,12 +18,16 @@ public class Cash implements Cloneable{
     /**
      * Количество
      */
-    private long count;
+    private int count;
 
     /**
      * Метод добавления денежных средств
      */
     public void add(long count) {
+        if (count < 0)
+            throw new IllegalArgumentException(String.format("Количество добавляемых купюр не может быть отрицательным, %s",
+                    count));
+
         this.count += count;
     }
 
@@ -39,7 +43,7 @@ public class Cash implements Cloneable{
     }
 
     @Override
-    public Cash clone() {
-        return new Cash(nominal, count);
+    public CashBox clone() {
+        return new CashBox(nominal, count);
     }
 }
